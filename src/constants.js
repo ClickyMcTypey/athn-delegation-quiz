@@ -6,6 +6,7 @@ export const SELECTORS = {
     prevButton: '[cmd="prev"]',
     radio: 'input[type="radio"]',
     buttonMask: '.quiz_buttonmask',
+    option: '.quiz_option',
 };
 
 export const CLASSES = {
