@@ -2,11 +2,12 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
     build: {
+        manifest: true,
         lib: {
             entry: 'src/app.js',
-            name: 'DelegationQuiz',
+            name: 'AthenaDelegationQuiz',
             formats: ['iife'],
-            fileName: () => 'delegation-quiz.js',
+            fileName: () => 'athn-delegation-quiz.[hash].js',
         },
     },
 });
