@@ -1,5 +1,6 @@
 import { SELECTORS } from '../constants.js';
 import { qs, qsa } from '../utils/dom.js';
+import { setupInitialSlides } from './steps.js';
 
 export function initQuiz() {
     const root = qs(SELECTORS.root);
@@ -21,6 +22,8 @@ export function initQuiz() {
         isAnimating: false,
         answers: {},
     };
+
+    setupInitialSlides(state);
 
     console.log('[Delegation Quiz] Initialized', state);
 
