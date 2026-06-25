@@ -25,7 +25,7 @@ export function showSlide(state, targetIndex) {
 
         slide.style.display = isActive ? 'block' : 'none';
         slide.style.opacity = isActive ? '1' : '0';
-        slide.style.transform = 'translateX(0)';
+        slide.style.transform = 'none';
         slide.setAttribute('aria-hidden', isActive ? 'false' : 'true');
 
         if ('inert' in slide) {
