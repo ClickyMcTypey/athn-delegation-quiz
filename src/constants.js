@@ -1,0 +1,16 @@
+export const SELECTORS = {
+    root: '#mainquiz',
+    slideContainer: '.quiz_slidecontainer',
+    slide: '.quiz_slide[slide]',
+    nextButton: '[cmd="next"]',
+    prevButton: '[cmd="prev"]',
+    radio: 'input[type="radio"]',
+    buttonMask: '.quiz_buttonmask',
+};
+
+export const CLASSES = {
+    disabled: 'disabled',
+    active: 'is-active',
+};
+
+export const QUIZ_VERSION = '0.1.0';
