@@ -1,15 +1,16 @@
 import { SELECTORS } from '../constants.js';
-import { goToNextSlide, goToPrevSlide, getCurrentSlide } from './steps.js';
+import { getCurrentSlide, goToNextSlide, goToPrevSlide } from './steps.js';
 import { validateSlide } from './validation.js';
+import { isFormSlide, updateQuizResult } from './scoring.js';
 
 export function setupNavigation(state) {
-    state.root.addEventListener('click', (event) => {
+    state.root.addEventListener('click', async (event) => {
         const button = event.target.closest('button[cmd]');
         if (!button) return;
 
         const command = button.getAttribute('cmd');
 
-        if (button.disabled) return;
+        if (button.disabled || state.isAnimating) return;
 
         if (command === 'next') {
             const currentSlide = getCurrentSlide(state);
@@ -17,12 +18,19 @@ export function setupNavigation(state) {
 
             if (!isValid) return;
 
-            goToNextSlide(state);
+            await goToNextSlide(state);
+
+            const nextSlide = getCurrentSlide(state);
+
+            if (isFormSlide(nextSlide)) {
+                updateQuizResult(state);
+            }
+
             return;
         }
 
         if (command === 'prev') {
-            goToPrevSlide(state);
+            await goToPrevSlide(state);
         }
     });
 }
