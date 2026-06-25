@@ -1,4 +1,5 @@
 import { CLASSES, SELECTORS } from '../constants.js';
+import { animateToSlide } from './animation.js';
 
 export function setButtonState(button, isEnabled) {
     if (!button) return;
@@ -36,11 +37,13 @@ export function showSlide(state, targetIndex) {
 }
 
 export function goToNextSlide(state) {
-    showSlide(state, state.currentIndex + 1);
+    if (state.isAnimating) return;
+    return animateToSlide(state, state.currentIndex + 1);
 }
 
 export function goToPrevSlide(state) {
-    showSlide(state, state.currentIndex - 1);
+    if (state.isAnimating) return;
+    return animateToSlide(state, state.currentIndex - 1);
 }
 
 export function setupInitialSlides(state) {
