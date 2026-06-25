@@ -1,3 +1,21 @@
+import { ANIMATION } from '../constants.js';
+
+export function fadeInQuiz(state) {
+    const root = state.root;
+    if (!root) return;
+
+    root.style.opacity = '0';
+    root.style.transition = `opacity ${ANIMATION.initialFadeDuration}ms ${ANIMATION.fadeEase}`;
+
+    root.offsetHeight;
+
+    root.style.opacity = '1';
+
+    window.setTimeout(() => {
+        root.style.transition = '';
+    }, ANIMATION.initialFadeDuration + 40);
+}
+
 export function animateToSlide(state, targetIndex) {
     return new Promise((resolve) => {
         if (targetIndex < 0 || targetIndex >= state.slides.length) {
@@ -24,8 +42,10 @@ export function animateToSlide(state, targetIndex) {
 
         targetSlide.offsetHeight;
 
-        currentSlide.style.transition = 'opacity 220ms ease';
-        targetSlide.style.transition = 'opacity 220ms ease';
+        const transition = `opacity ${ANIMATION.fadeDuration}ms ${ANIMATION.fadeEase}`;
+
+        currentSlide.style.transition = transition;
+        targetSlide.style.transition = transition;
 
         currentSlide.style.opacity = '0';
         targetSlide.style.opacity = '1';
@@ -45,6 +65,6 @@ export function animateToSlide(state, targetIndex) {
             state.isAnimating = false;
 
             resolve(true);
-        }, 240);
+        }, ANIMATION.fadeDuration + 40);
     });
 }

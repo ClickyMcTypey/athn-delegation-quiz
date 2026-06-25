@@ -7,6 +7,7 @@ export const SELECTORS = {
     radio: 'input[type="radio"]',
     buttonMask: '.quiz_buttonmask',
     option: '.quiz_option',
+    hubspotForm: '#hubspotQuizForm',
 };
 
 export const CLASSES = {
@@ -15,3 +16,9 @@ export const CLASSES = {
 };
 
 export const QUIZ_VERSION = '0.1.0';
+
+export const ANIMATION = {
+    fadeDuration: 600,
+    fadeEase: 'ease',
+    initialFadeDuration: 500,
+};

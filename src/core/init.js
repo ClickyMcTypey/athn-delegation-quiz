@@ -3,6 +3,7 @@ import { qs, qsa } from '../utils/dom.js';
 import { setupInitialSlides } from './steps.js';
 import { setupValidation } from './validation.js';
 import { setupNavigation } from './navigation.js';
+import { fadeInQuiz } from './animation.js';
 
 export function initQuiz() {
     const root = qs(SELECTORS.root);
@@ -28,6 +29,7 @@ export function initQuiz() {
     setupInitialSlides(state);
     setupValidation(state);
     setupNavigation(state);
+    fadeInQuiz(state);
 
     console.log('[Delegation Quiz] Initialized', state);
 
