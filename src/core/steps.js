@@ -12,7 +12,13 @@ export function setButtonState(button, isEnabled) {
     }
 }
 
+export function getCurrentSlide(state) {
+    return state.slides[state.currentIndex] || null;
+}
+
 export function showSlide(state, targetIndex) {
+    if (targetIndex < 0 || targetIndex >= state.slides.length) return;
+
     state.slides.forEach((slide, index) => {
         const isActive = index === targetIndex;
 
@@ -21,13 +27,20 @@ export function showSlide(state, targetIndex) {
         slide.style.transform = 'translateX(0)';
         slide.setAttribute('aria-hidden', isActive ? 'false' : 'true');
 
-        // Prevent keyboard focus inside hidden slides.
         if ('inert' in slide) {
             slide.inert = !isActive;
         }
     });
 
     state.currentIndex = targetIndex;
+}
+
+export function goToNextSlide(state) {
+    showSlide(state, state.currentIndex + 1);
+}
+
+export function goToPrevSlide(state) {
+    showSlide(state, state.currentIndex - 1);
 }
 
 export function setupInitialSlides(state) {
@@ -39,7 +52,6 @@ export function setupInitialSlides(state) {
 
         setButtonState(prevButton, index !== 0);
 
-        // Question Next buttons start disabled.
         if (nextButton) {
             setButtonState(nextButton, false);
         }
