@@ -2,19 +2,16 @@ const RESULT_TIERS = [
     {
         min: 0,
         max: 10,
-        tier: 'tier_1',
         label: 'Overloaded Operator',
     },
     {
         min: 11,
         max: 20,
-        tier: 'tier_2',
         label: 'Emerging Delegator',
     },
     {
         min: 21,
         max: 30,
-        tier: 'tier_3',
         label: 'Strategic Delegator',
     },
 ];
@@ -25,38 +22,21 @@ function getTotalScore(answers) {
     }, 0);
 }
 
-function getMaxScoreFromSlides(slides) {
-    return slides.reduce((total, slide) => {
-        const radios = Array.from(slide.querySelectorAll('input[type="radio"][data-score]'));
+function getResultLabel(totalScore) {
+    const result = RESULT_TIERS.find((tier) => {
+        return totalScore >= tier.min && totalScore <= tier.max;
+    });
 
-        if (!radios.length) return total;
-
-        const highestScore = radios.reduce((highest, radio) => {
-            return Math.max(highest, Number(radio.dataset.score || 0));
-        }, 0);
-
-        return total + highestScore;
-    }, 0);
-}
-
-function getResultTier(totalScore) {
-    return (
-        RESULT_TIERS.find((result) => {
-            return totalScore >= result.min && totalScore <= result.max;
-        }) || RESULT_TIERS[RESULT_TIERS.length - 1]
-    );
+    return result?.label || RESULT_TIERS[RESULT_TIERS.length - 1].label;
 }
 
 export function calculateQuizResult(state) {
     const totalScore = getTotalScore(state.answers);
-    const maxScore = getMaxScoreFromSlides(state.slides);
-    const result = getResultTier(totalScore);
+    const resultLabel = getResultLabel(totalScore);
 
     return {
         totalScore,
-        maxScore,
-        resultTier: result.tier,
-        resultLabel: result.label,
+        resultLabel,
     };
 }
 
