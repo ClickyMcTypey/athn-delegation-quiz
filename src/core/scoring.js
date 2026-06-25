@@ -1,5 +1,3 @@
-import { QUIZ_VERSION } from '../constants.js';
-
 const RESULT_TIERS = [
     {
         min: 0,
@@ -59,10 +57,6 @@ export function calculateQuizResult(state) {
         maxScore,
         resultTier: result.tier,
         resultLabel: result.label,
-        quizVersion: QUIZ_VERSION,
-        completedAt: new Date().toISOString(),
-        answers: state.answers,
-        answersJson: JSON.stringify(state.answers),
     };
 }
 
