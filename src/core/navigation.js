@@ -2,6 +2,7 @@ import { SELECTORS } from '../constants.js';
 import { getCurrentSlide, goToNextSlide, goToPrevSlide } from './steps.js';
 import { validateSlide } from './validation.js';
 import { isFormSlide, updateQuizResult } from './scoring.js';
+import { syncResultToHubSpot } from './hubspot.js';
 
 export function setupNavigation(state) {
     state.root.addEventListener('click', async (event) => {
@@ -24,6 +25,7 @@ export function setupNavigation(state) {
 
             if (isFormSlide(nextSlide)) {
                 updateQuizResult(state);
+                syncResultToHubSpot(state);
             }
 
             return;

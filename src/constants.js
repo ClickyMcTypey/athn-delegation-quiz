@@ -22,3 +22,8 @@ export const ANIMATION = {
     fadeEase: 'ease',
     initialFadeDuration: 500,
 };
+
+export const HUBSPOT_FIELDS = {
+    totalScore: 'delagationquiz_score',
+    resultLabel: 'delagationquiz_level',
+};
