@@ -24,6 +24,6 @@ export const ANIMATION = {
 };
 
 export const HUBSPOT_FIELDS = {
-    totalScore: 'delagationquiz_score',
-    resultLabel: 'delagationquiz_level',
+    totalScore: 'delegationquiz_score',
+    resultLabel: 'delegationquiz_level',
 };
