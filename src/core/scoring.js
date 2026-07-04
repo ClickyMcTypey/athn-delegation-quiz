@@ -1,18 +1,33 @@
 const RESULT_TIERS = [
     {
-        min: 0,
-        max: 10,
-        label: 'Overloaded Operator',
+        min: 10,
+        max: 16,
+        label: 'Beginner',
     },
     {
-        min: 11,
-        max: 20,
-        label: 'Emerging Delegator',
+        min: 17,
+        max: 22,
+        label: 'Novice',
     },
     {
-        min: 21,
-        max: 30,
-        label: 'Strategic Delegator',
+        min: 23,
+        max: 28,
+        label: 'Intermediate',
+    },
+    {
+        min: 29,
+        max: 33,
+        label: 'Advanced',
+    },
+    {
+        min: 34,
+        max: 37,
+        label: 'Expert',
+    },
+    {
+        min: 38,
+        max: 40,
+        label: 'Mastery',
     },
 ];
 
