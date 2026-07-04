@@ -27,3 +27,5 @@ export const HUBSPOT_FIELDS = {
     totalScore: 'delegationquiz_score',
     resultLabel: 'delegationquiz_level',
 };
+
+export const THANK_YOU_URL = '/thank-you';
