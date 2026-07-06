@@ -2,7 +2,7 @@ import { ANIMATION, SELECTORS } from '../constants.js';
 import { updateProgressBar } from './progress.js';
 
 function getHeight(element) {
-    return element.getBoundingClientRect().height;
+    return element.scrollHeight;
 }
 
 function animateContainerHeight(state, fromHeight, toHeight) {
