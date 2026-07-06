@@ -9,6 +9,9 @@ export const SELECTORS = {
     option: '.quiz_option',
     hubspotForm: '#hubspotQuizForm',
     progressBar: '.quiz_progress_bar',
+    progressCurrent: '#progress_current',
+    progressTotal: '#progress_total',
+
 };
 
 export const CLASSES = {
