@@ -99,8 +99,16 @@ export function animateToSlide(state, targetIndex) {
 
         state.isAnimating = true;
 
-        const currentHeight = getHeight(currentSlide);
+        const container = state.slideContainer;
+        const currentHeight = container.getBoundingClientRect().height;
 
+        // Lock current height before any slide visibility changes.
+        container.style.height = `${currentHeight}px`;
+        container.style.overflow = 'hidden';
+        container.style.transition = '';
+        container.offsetHeight;
+
+        // Prepare target for measurement.
         targetSlide.style.display = 'block';
         targetSlide.style.opacity = '0';
         targetSlide.style.transform = 'none';
@@ -111,17 +119,20 @@ export function animateToSlide(state, targetIndex) {
 
         targetSlide.offsetHeight;
 
-        const targetHeight = getHeight(targetSlide);
+        const targetHeight = targetSlide.getBoundingClientRect().height;
 
         targetSlide.style.visibility = '';
 
-        animateContainerHeight(state, currentHeight, targetHeight);
-
+        const heightTransition = `height ${ANIMATION.heightDuration}ms ${ANIMATION.fadeEase}`;
         const fadeTransition = `opacity ${ANIMATION.fadeDuration}ms ${ANIMATION.fadeEase}`;
 
+        container.style.transition = heightTransition;
         currentSlide.style.transition = fadeTransition;
         targetSlide.style.transition = fadeTransition;
 
+        container.offsetHeight;
+
+        container.style.height = `${targetHeight}px`;
         currentSlide.style.opacity = '0';
         targetSlide.style.opacity = '1';
 
@@ -139,8 +150,8 @@ export function animateToSlide(state, targetIndex) {
             targetSlide.style.opacity = '1';
             targetSlide.style.visibility = '';
 
-            state.slideContainer.style.transition = '';
-            state.slideContainer.style.height = 'auto';
+            container.style.transition = '';
+            container.style.height = 'auto';
 
             state.currentIndex = targetIndex;
             state.isAnimating = false;
