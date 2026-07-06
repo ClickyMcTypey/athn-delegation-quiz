@@ -116,6 +116,7 @@ export function animateToSlide(state, targetIndex) {
         }
 
         state.isAnimating = true;
+        state.root.classList.add('is-transitioning');
 
         const container = state.slideContainer;
         const currentHeight = container.getBoundingClientRect().height;
@@ -133,7 +134,8 @@ export function animateToSlide(state, targetIndex) {
         targetSlide.style.visibility = 'hidden';
         targetSlide.setAttribute('aria-hidden', 'false');
 
-        if ('inert' in targetSlide) targetSlide.inert = false;
+        if ('inert' in currentSlide) currentSlide.inert = true;
+        if ('inert' in targetSlide) targetSlide.inert = true;
 
         targetSlide.offsetHeight;
 
@@ -172,6 +174,13 @@ export function animateToSlide(state, targetIndex) {
             container.style.height = `${targetHeight}px`;
             state.currentIndex = targetIndex;
             state.isAnimating = false;
+            state.root.classList.remove('is-transitioning');
+
+            if ('inert' in targetSlide) {
+                targetSlide.inert = false;
+            }
+
+
             watchActiveSlideHeight(state, targetSlide);
 
             updateProgressBar(state);
