@@ -30,6 +30,7 @@ export function initQuiz() {
     setupInitialSlides(state);
     setupValidation(state);
     setupNavigation(state);
+    setupHubSpotCallbacks(state);
     fadeInQuiz(state);
 
     console.log('[Delegation Quiz] Initialized', state);
