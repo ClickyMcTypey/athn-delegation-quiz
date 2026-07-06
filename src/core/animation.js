@@ -17,6 +17,23 @@ function animateContainerHeight(state, fromHeight, toHeight) {
     container.style.height = `${toHeight}px`;
 }
 
+function watchActiveSlideHeight(state, slide) {
+    if (state.activeResizeObserver) {
+        state.activeResizeObserver.disconnect();
+    }
+
+    if (!window.ResizeObserver || !slide) return;
+
+    state.activeResizeObserver = new ResizeObserver(() => {
+        if (state.isAnimating) return;
+
+        const height = slide.getBoundingClientRect().height;
+        state.slideContainer.style.height = `${height}px`;
+    });
+
+    state.activeResizeObserver.observe(slide);
+}
+
 export function fadeInQuiz(state) {
     const root = state.root;
     const container = state.slideContainer;
@@ -68,14 +85,15 @@ export function fadeInQuiz(state) {
 
     window.setTimeout(() => {
         container.style.transition = '';
-        container.style.height = 'auto';
-
+        container.style.height = `${targetHeight}px`;
         firstSlide.style.transition = '';
         firstSlide.style.opacity = '1';
 
         if (loader) {
             loader.style.display = 'none';
         }
+
+        watchActiveSlideHeight(state, firstSlide);
 
         root.classList.add('is-ready');
         root.setAttribute('aria-busy', 'false');
@@ -151,10 +169,10 @@ export function animateToSlide(state, targetIndex) {
             targetSlide.style.visibility = '';
 
             container.style.transition = '';
-            container.style.height = 'auto';
-
+            container.style.height = `${targetHeight}px`;
             state.currentIndex = targetIndex;
             state.isAnimating = false;
+            watchActiveSlideHeight(state, targetSlide);
 
             updateProgressBar(state);
 
