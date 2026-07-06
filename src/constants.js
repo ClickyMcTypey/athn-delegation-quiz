@@ -11,7 +11,7 @@ export const SELECTORS = {
     progressBar: '.quiz_progress_bar',
     progressCurrent: '#progress_current',
     progressTotal: '#progress_total',
-
+    loader: '.quiz_loader',
 };
 
 export const CLASSES = {
@@ -26,6 +26,7 @@ export const ANIMATION = {
     fadeEase: 'ease',
     initialFadeDuration: 500,
     heightDuration: 600,
+    loadingHeight: 96,
 };
 
 export const HUBSPOT_FIELDS = {

@@ -1,4 +1,4 @@
-import { ANIMATION } from '../constants.js';
+import { ANIMATION, SELECTORS } from '../constants.js';
 import { updateProgressBar } from './progress.js';
 
 function getHeight(element) {
@@ -19,18 +19,67 @@ function animateContainerHeight(state, fromHeight, toHeight) {
 
 export function fadeInQuiz(state) {
     const root = state.root;
-    if (!root) return;
+    const container = state.slideContainer;
+    const firstSlide = state.slides[0];
+    const loader = root.querySelector(SELECTORS.loader);
 
-    root.style.opacity = '0';
-    root.style.transition = `opacity ${ANIMATION.initialFadeDuration}ms ${ANIMATION.fadeEase}`;
+    if (!root || !container || !firstSlide) return;
 
-    root.offsetHeight;
+    root.classList.remove('is-ready');
+    root.setAttribute('aria-busy', 'true');
 
-    root.style.opacity = '1';
+    const startHeight =
+        loader?.getBoundingClientRect().height || ANIMATION.loadingHeight;
+
+    container.style.height = `${startHeight}px`;
+    container.style.overflow = 'hidden';
+
+    firstSlide.style.display = 'block';
+    firstSlide.style.visibility = 'hidden';
+    firstSlide.style.opacity = '0';
+
+    firstSlide.offsetHeight;
+
+    const targetHeight = firstSlide.getBoundingClientRect().height;
+
+    firstSlide.style.visibility = '';
+
+    container.style.transition = `height ${ANIMATION.heightDuration}ms ${ANIMATION.fadeEase}`;
+    firstSlide.style.transition = `opacity ${ANIMATION.initialFadeDuration}ms ${ANIMATION.fadeEase}`;
+
+    if (loader) {
+        loader.style.transition = `opacity ${ANIMATION.initialFadeDuration}ms ${ANIMATION.fadeEase}`;
+    }
+
+    container.offsetHeight;
+
+    container.style.height = `${targetHeight}px`;
+
+    if (loader) {
+        loader.style.opacity = '0';
+    }
+
+    firstSlide.style.opacity = '1';
+
+    const duration = Math.max(
+        ANIMATION.heightDuration,
+        ANIMATION.initialFadeDuration
+    );
 
     window.setTimeout(() => {
-        root.style.transition = '';
-    }, ANIMATION.initialFadeDuration + 40);
+        container.style.transition = '';
+        container.style.height = 'auto';
+
+        firstSlide.style.transition = '';
+        firstSlide.style.opacity = '1';
+
+        if (loader) {
+            loader.style.display = 'none';
+        }
+
+        root.classList.add('is-ready');
+        root.setAttribute('aria-busy', 'false');
+    }, duration + 40);
 }
 
 export function animateToSlide(state, targetIndex) {

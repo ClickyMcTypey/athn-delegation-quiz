@@ -49,9 +49,19 @@ export function goToPrevSlide(state) {
 }
 
 export function setupInitialSlides(state) {
-    showSlide(state, 0);
-
     state.slides.forEach((slide, index) => {
+        const isActive = index === 0;
+
+        slide.style.display = isActive ? 'block' : 'none';
+        slide.style.opacity = '0';
+        slide.style.transform = 'none';
+        slide.style.visibility = isActive ? 'hidden' : '';
+        slide.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+
+        if ('inert' in slide) {
+            slide.inert = !isActive;
+        }
+
         const prevButton = slide.querySelector(SELECTORS.prevButton);
         const nextButton = slide.querySelector(SELECTORS.nextButton);
 
@@ -61,4 +71,7 @@ export function setupInitialSlides(state) {
             setButtonState(nextButton, false);
         }
     });
+
+    state.currentIndex = 0;
+    updateProgressBar(state);
 }
