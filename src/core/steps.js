@@ -1,5 +1,6 @@
 import { CLASSES, SELECTORS } from '../constants.js';
 import { animateToSlide } from './animation.js';
+import { updateProgressBar } from './progress.js';
 
 export function setButtonState(button, isEnabled) {
     if (!button) return;
@@ -34,6 +35,7 @@ export function showSlide(state, targetIndex) {
     });
 
     state.currentIndex = targetIndex;
+    updateProgressBar(state);
 }
 
 export function goToNextSlide(state) {

@@ -8,6 +8,7 @@ export const SELECTORS = {
     buttonMask: '.quiz_buttonmask',
     option: '.quiz_option',
     hubspotForm: '#hubspotQuizForm',
+    progressBar: '.quiz_progress_bar',
 };
 
 export const CLASSES = {
@@ -29,3 +30,4 @@ export const HUBSPOT_FIELDS = {
 };
 
 export const THANK_YOU_URL = '/thank-you';
+

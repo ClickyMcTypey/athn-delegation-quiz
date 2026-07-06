@@ -1,4 +1,5 @@
 import { ANIMATION } from '../constants.js';
+import { updateProgressBar } from './progress.js';
 
 export function fadeInQuiz(state) {
     const root = state.root;
@@ -63,6 +64,8 @@ export function animateToSlide(state, targetIndex) {
 
             state.currentIndex = targetIndex;
             state.isAnimating = false;
+
+            updateProgressBar(state);
 
             resolve(true);
         }, ANIMATION.fadeDuration + 40);
