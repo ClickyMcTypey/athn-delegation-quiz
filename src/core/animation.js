@@ -1,6 +1,22 @@
 import { ANIMATION } from '../constants.js';
 import { updateProgressBar } from './progress.js';
 
+function getHeight(element) {
+    return element.getBoundingClientRect().height;
+}
+
+function animateContainerHeight(state, fromHeight, toHeight) {
+    const container = state.slideContainer;
+
+    container.style.height = `${fromHeight}px`;
+    container.style.overflow = 'hidden';
+    container.style.transition = `height ${ANIMATION.heightDuration}ms ${ANIMATION.fadeEase}`;
+
+    container.offsetHeight;
+
+    container.style.height = `${toHeight}px`;
+}
+
 export function fadeInQuiz(state) {
     const root = state.root;
     if (!root) return;
@@ -34,22 +50,33 @@ export function animateToSlide(state, targetIndex) {
 
         state.isAnimating = true;
 
+        const currentHeight = getHeight(currentSlide);
+
         targetSlide.style.display = 'block';
         targetSlide.style.opacity = '0';
         targetSlide.style.transform = 'none';
+        targetSlide.style.visibility = 'hidden';
         targetSlide.setAttribute('aria-hidden', 'false');
 
         if ('inert' in targetSlide) targetSlide.inert = false;
 
         targetSlide.offsetHeight;
 
-        const transition = `opacity ${ANIMATION.fadeDuration}ms ${ANIMATION.fadeEase}`;
+        const targetHeight = getHeight(targetSlide);
 
-        currentSlide.style.transition = transition;
-        targetSlide.style.transition = transition;
+        targetSlide.style.visibility = '';
+
+        animateContainerHeight(state, currentHeight, targetHeight);
+
+        const fadeTransition = `opacity ${ANIMATION.fadeDuration}ms ${ANIMATION.fadeEase}`;
+
+        currentSlide.style.transition = fadeTransition;
+        targetSlide.style.transition = fadeTransition;
 
         currentSlide.style.opacity = '0';
         targetSlide.style.opacity = '1';
+
+        const duration = Math.max(ANIMATION.fadeDuration, ANIMATION.heightDuration);
 
         window.setTimeout(() => {
             currentSlide.style.display = 'none';
@@ -61,6 +88,10 @@ export function animateToSlide(state, targetIndex) {
 
             targetSlide.style.transition = '';
             targetSlide.style.opacity = '1';
+            targetSlide.style.visibility = '';
+
+            state.slideContainer.style.transition = '';
+            state.slideContainer.style.height = 'auto';
 
             state.currentIndex = targetIndex;
             state.isAnimating = false;
@@ -68,6 +99,6 @@ export function animateToSlide(state, targetIndex) {
             updateProgressBar(state);
 
             resolve(true);
-        }, ANIMATION.fadeDuration + 40);
+        }, duration + 40);
     });
 }

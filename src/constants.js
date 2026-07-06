@@ -25,6 +25,7 @@ export const ANIMATION = {
     fadeDuration: 600,
     fadeEase: 'ease',
     initialFadeDuration: 500,
+    heightDuration: 600,
 };
 
 export const HUBSPOT_FIELDS = {
