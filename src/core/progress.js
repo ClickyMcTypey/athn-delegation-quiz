@@ -57,11 +57,11 @@ export function updateProgressBar(state) {
     }
 
     if (progressCurrent) {
-        progressCurrent.textContent = String(current).padStart(2, '0');
+        progressCurrent.textContent = String(current);
     }
 
     if (progressTotal) {
-        progressTotal.textContent = String(total).padStart(2, '0');
+        progressTotal.textContent = String(total);
     }
 
     console.log('[Delegation Quiz] Progress updated', {
