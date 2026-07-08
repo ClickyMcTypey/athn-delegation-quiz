@@ -22,10 +22,10 @@ export const CLASSES = {
 export const QUIZ_VERSION = '0.1.0';
 
 export const ANIMATION = {
-    fadeDuration: 600,
+    fadeDuration: 300,
     fadeEase: 'ease',
-    initialFadeDuration: 500,
-    heightDuration: 600,
+    initialFadeDuration: 300,
+    heightDuration: 300,
     loadingHeight: 96,
 };
 
