@@ -32,6 +32,7 @@ export function initQuiz() {
     setupNavigation(state);
     setupHubSpotCallbacks(state);
     fadeInQuiz(state);
+    setupEducationBlockMove(state);
 
     console.log('[Delegation Quiz] Initialized', state);
 

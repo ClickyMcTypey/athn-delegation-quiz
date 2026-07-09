@@ -41,6 +41,36 @@ export function syncResultToHubSpot(state) {
     return totalSynced && labelSynced;
 }
 
+export function moveEducationBlockBeforeSubmit(state) {
+    const educationBlock = document.querySelector(SELECTORS.educationBlock);
+    const submitBlock = state.root.querySelector(SELECTORS.hubspotSubmit);
+
+    if (!educationBlock || !submitBlock) return false;
+
+    submitBlock.parentNode.insertBefore(educationBlock, submitBlock);
+
+    console.log('[Delegation Quiz] Education block moved before HubSpot submit');
+
+    return true;
+}
+
+export function setupEducationBlockMove(state) {
+    const tryMove = () => moveEducationBlockBeforeSubmit(state);
+
+    if (tryMove()) return;
+
+    const observer = new MutationObserver(() => {
+        if (tryMove()) {
+            observer.disconnect();
+        }
+    });
+
+    observer.observe(state.root, {
+        childList: true,
+        subtree: true,
+    });
+}
+
 export function setupHubSpotCallbacks(state) {
     window.AthenaDelegationQuiz = window.AthenaDelegationQuiz || {};
 
@@ -64,5 +94,15 @@ export function setupHubSpotCallbacks(state) {
         console.log('[Delegation Quiz] HubSpot submitted, redirecting');
 
         window.location.href = THANK_YOU_URL;
+    };
+
+    window.AthenaDelegationQuiz.onHubSpotReady = function () {
+        console.log('[Delegation Quiz] HubSpot ready');
+
+        moveEducationBlockBeforeSubmit(state);
+
+        if (state.result) {
+            syncResultToHubSpot(state);
+        }
     };
 }

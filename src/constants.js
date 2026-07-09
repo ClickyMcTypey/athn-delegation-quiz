@@ -12,6 +12,8 @@ export const SELECTORS = {
     progressCurrent: '#progress_current',
     progressTotal: '#progress_total',
     loader: '.quiz_loader',
+    educationBlock: '#educ1',
+    hubspotSubmit: '.hs_submit',
 };
 
 export const CLASSES = {
