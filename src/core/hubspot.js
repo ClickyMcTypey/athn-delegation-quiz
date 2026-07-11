@@ -1,4 +1,11 @@
 import { HUBSPOT_FIELDS, SELECTORS, THANK_YOU_URL } from '../constants.js';
+import { log, warn } from '../utils/logger.js';
+
+function getAvailableFieldNames(root) {
+    return Array.from(root.querySelectorAll('input, select, textarea'))
+        .map((field) => field.name)
+        .filter(Boolean);
+}
 
 function getHubSpotRoot(state) {
     return state.root.querySelector(SELECTORS.hubspotForm) || state.root;
@@ -16,7 +23,10 @@ function setFieldValue(root, fieldName, value) {
 }
 
 export function syncResultToHubSpot(state) {
-    if (!state.result) return false;
+    if (!state.result) {
+        warn('HubSpot sync skipped: no quiz result yet');
+        return false;
+    }
 
     const root = getHubSpotRoot(state);
 
@@ -32,13 +42,21 @@ export function syncResultToHubSpot(state) {
         state.result.resultLabel
     );
 
-    console.log('[Delegation Quiz] HubSpot sync', {
+    const payload = {
         totalSynced,
         labelSynced,
         result: state.result,
-    });
+        expectedFields: HUBSPOT_FIELDS,
+        availableFields: getAvailableFieldNames(root),
+    };
 
-    return totalSynced && labelSynced;
+    if (!totalSynced || !labelSynced) {
+        warn('HubSpot sync incomplete', payload);
+        return false;
+    }
+
+    log('HubSpot sync successful', payload);
+    return true;
 }
 
 export function moveEducationBlockBeforeSubmit(state) {
@@ -71,38 +89,52 @@ export function setupEducationBlockMove(state) {
     });
 }
 
+export function setupHubSpotMessageLogger() {
+    window.addEventListener('message', (event) => {
+        const data = event.data;
+
+        if (!data || data.type !== 'hsFormCallback') return;
+
+        log('HubSpot global message event', {
+            eventName: data.eventName,
+            id: data.id,
+            data,
+        });
+    });
+}
+
 export function setupHubSpotCallbacks(state) {
     window.AthenaDelegationQuiz = window.AthenaDelegationQuiz || {};
 
-    window.AthenaDelegationQuiz.onHubSpotReady = function () {
-        console.log('[Delegation Quiz] HubSpot ready');
+    window.AthenaDelegationQuiz.onHubSpotReady = function ($form) {
+        log('HubSpot callback: onFormReady', {
+            form: $form,
+            hasResult: Boolean(state.result),
+        });
+
+        moveEducationBlockBeforeSubmit?.(state);
 
         if (state.result) {
             syncResultToHubSpot(state);
         }
     };
 
-    window.AthenaDelegationQuiz.onHubSpotBeforeSubmit = function () {
-        console.log('[Delegation Quiz] HubSpot before submit');
+    window.AthenaDelegationQuiz.onHubSpotBeforeSubmit = function ($form) {
+        log('HubSpot callback: onBeforeFormSubmit', {
+            form: $form,
+            result: state.result,
+        });
 
-        if (state.result) {
-            syncResultToHubSpot(state);
-        }
+        syncResultToHubSpot(state);
     };
 
-    window.AthenaDelegationQuiz.onHubSpotSubmitted = function () {
-        console.log('[Delegation Quiz] HubSpot submitted, redirecting');
+    window.AthenaDelegationQuiz.onHubSpotSubmitted = function ($form) {
+        log('HubSpot callback: onFormSubmitted', {
+            form: $form,
+            result: state.result,
+        });
 
-        window.location.href = THANK_YOU_URL;
-    };
-
-    window.AthenaDelegationQuiz.onHubSpotReady = function () {
-        console.log('[Delegation Quiz] HubSpot ready');
-
-        moveEducationBlockBeforeSubmit(state);
-
-        if (state.result) {
-            syncResultToHubSpot(state);
-        }
+        // Keep redirect paused for now.
+        // window.location.href = THANK_YOU_URL;
     };
 }

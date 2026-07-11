@@ -4,7 +4,7 @@ import { setupInitialSlides } from './steps.js';
 import { setupValidation } from './validation.js';
 import { setupNavigation } from './navigation.js';
 import { fadeInQuiz } from './animation.js';
-import { setupHubSpotCallbacks } from './hubspot.js';
+import { setupHubSpotCallbacks, setupHubSpotMessageLogger } from './hubspot.js';
 
 export function initQuiz() {
     const root = qs(SELECTORS.root);
@@ -31,6 +31,7 @@ export function initQuiz() {
     setupValidation(state);
     setupNavigation(state);
     setupHubSpotCallbacks(state);
+    setupHubSpotMessageLogger();
     fadeInQuiz(state);
     setupEducationBlockMove(state);
 

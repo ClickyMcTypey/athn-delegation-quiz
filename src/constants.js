@@ -38,3 +38,4 @@ export const HUBSPOT_FIELDS = {
 
 export const THANK_YOU_URL = '/thank-you';
 
+export const DEBUG = true;
