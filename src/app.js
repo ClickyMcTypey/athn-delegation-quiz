@@ -6,6 +6,7 @@ function start() {
     if (!quiz) return;
 
     window.AthenaDelegationQuiz = {
+        ...(window.AthenaDelegationQuiz || {}),
         quiz,
     };
 }

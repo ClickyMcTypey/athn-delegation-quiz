@@ -4,7 +4,7 @@ import { setupInitialSlides } from './steps.js';
 import { setupValidation } from './validation.js';
 import { setupNavigation } from './navigation.js';
 import { fadeInQuiz } from './animation.js';
-import { setupHubSpotCallbacks, setupHubSpotMessageLogger } from './hubspot.js';
+import { setupHubSpotCallbacks, setupHubSpotMessageLogger, setupEducationBlockMove, } from './hubspot.js';
 
 export function initQuiz() {
     const root = qs(SELECTORS.root);

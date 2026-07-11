@@ -129,11 +129,12 @@ export function setupHubSpotCallbacks(state) {
     };
 
     window.AthenaDelegationQuiz.onHubSpotSubmitted = function ($form) {
-        log('HubSpot callback: onFormSubmitted', {
+        log('HubSpot callback: onFormSubmitted. Redirecting...', {
             form: $form,
             result: state.result,
+            thankYouUrl: THANK_YOU_URL,
         });
 
-        window.location.href = THANK_YOU_URL;
+        window.location.assign(THANK_YOU_URL);
     };
 }
