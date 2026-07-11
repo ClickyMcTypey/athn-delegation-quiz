@@ -134,7 +134,6 @@ export function setupHubSpotCallbacks(state) {
             result: state.result,
         });
 
-        // Keep redirect paused for now.
-        // window.location.href = THANK_YOU_URL;
+        window.location.href = THANK_YOU_URL;
     };
 }
