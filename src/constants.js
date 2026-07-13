@@ -36,6 +36,6 @@ export const HUBSPOT_FIELDS = {
     resultLabel: 'delegationquiz_level',
 };
 
-export const THANK_YOU_URL = '/thank-you';
+export const THANK_YOU_URL = '/quiz/thank-you';
 
-export const DEBUG = true;
+export const DEBUG = false;
