@@ -1,18 +1,6 @@
 import { CLASSES, SELECTORS } from '../constants.js';
-import { animateToSlide } from './animation.js';
+import { animateToCustomSlide, animateToSlide } from './animation.js';
 import { updateProgressBar } from './progress.js';
-import { animateToCustomSlide } from './animation.js';
-
-export function goToResultSlide(state, resultKey) {
-    const resultSlide = getResultSlide(state, resultKey);
-
-    if (!resultSlide) {
-        console.warn('[Delegation Quiz] Missing result slide', resultKey);
-        return;
-    }
-
-    return animateToCustomSlide(state, resultSlide);
-}
 
 export function setButtonState(button, isEnabled) {
     if (!button) return;
@@ -28,6 +16,23 @@ export function setButtonState(button, isEnabled) {
 
 export function getCurrentSlide(state) {
     return state.slides[state.currentIndex] || null;
+}
+
+export function getResultSlide(state, resultKey) {
+    return state.resultSlides?.find((slide) => {
+        return slide.getAttribute('result') === resultKey;
+    });
+}
+
+export function goToResultSlide(state, resultKey) {
+    const resultSlide = getResultSlide(state, resultKey);
+
+    if (!resultSlide) {
+        console.warn('[Delegation Quiz] Missing result slide', resultKey);
+        return;
+    }
+
+    return animateToCustomSlide(state, resultSlide);
 }
 
 export function showSlide(state, targetIndex) {
@@ -46,7 +51,20 @@ export function showSlide(state, targetIndex) {
         }
     });
 
+    state.resultSlides?.forEach((slide) => {
+        slide.style.display = 'none';
+        slide.style.opacity = '0';
+        slide.style.transform = 'none';
+        slide.setAttribute('aria-hidden', 'true');
+
+        if ('inert' in slide) {
+            slide.inert = true;
+        }
+    });
+
     state.currentIndex = targetIndex;
+    state.activeResultSlide = null;
+
     updateProgressBar(state);
 }
 
@@ -59,14 +77,6 @@ export function goToPrevSlide(state) {
     if (state.isAnimating) return;
     return animateToSlide(state, state.currentIndex - 1);
 }
-
-export function getResultSlide(state, resultKey) {
-    return state.resultSlides?.find((slide) => {
-        return slide.getAttribute('result') === resultKey;
-    });
-}
-
-
 
 export function setupInitialSlides(state) {
     state.slides.forEach((slide, index) => {
@@ -82,17 +92,6 @@ export function setupInitialSlides(state) {
             slide.inert = !isActive;
         }
 
-        state.resultSlides?.forEach((slide) => {
-            slide.style.display = 'none';
-            slide.style.opacity = '0';
-            slide.style.transform = 'none';
-            slide.setAttribute('aria-hidden', 'true');
-
-            if ('inert' in slide) {
-                slide.inert = true;
-            }
-        });
-
         const prevButton = slide.querySelector(SELECTORS.prevButton);
         const nextButton = slide.querySelector(SELECTORS.nextButton);
 
@@ -103,6 +102,19 @@ export function setupInitialSlides(state) {
         }
     });
 
+    state.resultSlides?.forEach((slide) => {
+        slide.style.display = 'none';
+        slide.style.opacity = '0';
+        slide.style.transform = 'none';
+        slide.setAttribute('aria-hidden', 'true');
+
+        if ('inert' in slide) {
+            slide.inert = true;
+        }
+    });
+
     state.currentIndex = 0;
+    state.activeResultSlide = null;
+
     updateProgressBar(state);
 }

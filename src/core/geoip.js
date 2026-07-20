@@ -1,58 +1,22 @@
-import { BANNED_COUNTRIES, GEOIP_ENDPOINT } from '../constants.js';
+import { BANNED_COUNTRIES } from '../constants.js';
 
 function normalizeCountryCode(value) {
     return String(value || '').trim().toUpperCase();
 }
 
 function getCountryFromPayload(payload) {
-    return normalizeCountryCode(
-        payload?.country ||
-        payload?.country_code ||
-        payload?.countryCode ||
-        payload?.country_code_iso2
-    );
+    return normalizeCountryCode(payload?.country_code);
 }
 
-export async function detectUserCountry() {
-    if (!GEOIP_ENDPOINT) {
-        return {
-            countryCode: '',
-            isBanned: false,
-            status: 'skipped',
-            error: 'Missing GEOIP_ENDPOINT',
-        };
-    }
+function getGeoResult(payload) {
+    const countryCode = getCountryFromPayload(payload);
+    const isBanned = BANNED_COUNTRIES.includes(countryCode);
 
-    try {
-        const response = await fetch(GEOIP_ENDPOINT, {
-            method: 'GET',
-            credentials: 'omit',
-        });
-
-        if (!response.ok) {
-            throw new Error(`GeoIP request failed: ${response.status}`);
-        }
-
-        const payload = await response.json();
-        const countryCode = getCountryFromPayload(payload);
-        const isBanned = BANNED_COUNTRIES.includes(countryCode);
-
-        return {
-            countryCode,
-            isBanned,
-            status: 'success',
-            error: '',
-        };
-    } catch (error) {
-        console.warn('[Delegation Quiz] GeoIP failed', error);
-
-        return {
-            countryCode: '',
-            isBanned: false,
-            status: 'error',
-            error: error?.message || 'Unknown GeoIP error',
-        };
-    }
+    return {
+        countryCode,
+        isBanned,
+        status: countryCode ? 'success' : 'unknown',
+    };
 }
 
 export function setupGeoIP(state) {
@@ -60,12 +24,32 @@ export function setupGeoIP(state) {
         countryCode: '',
         isBanned: false,
         status: 'loading',
-        error: '',
     };
 
-    detectUserCountry().then((geo) => {
-        state.geo = geo;
-
+    if (window.DELEGATION_QUIZ_GEO) {
+        state.geo = getGeoResult(window.DELEGATION_QUIZ_GEO);
         console.log('[Delegation Quiz] GeoIP result', state.geo);
-    });
+        return;
+    }
+
+    window.addEventListener(
+        'delegationQuiz:geoip',
+        (event) => {
+            state.geo = getGeoResult(event.detail);
+            console.log('[Delegation Quiz] GeoIP result', state.geo);
+        },
+        { once: true }
+    );
+
+    window.setTimeout(() => {
+        if (state.geo.status === 'loading') {
+            state.geo = {
+                countryCode: '',
+                isBanned: false,
+                status: 'timeout',
+            };
+
+            console.warn('[Delegation Quiz] GeoIP timed out; defaulting to allowed.');
+        }
+    }, 2500);
 }
