@@ -1,5 +1,10 @@
 export const GEOIP_ENDPOINT = window.DELEGATION_QUIZ_GEOIP_ENDPOINT || '';
 
+export const GEOIP_DEV_BYPASS = {
+    param: 'dev',
+    value: 'athn',
+};
+
 export const BANNED_COUNTRIES = [
     "PH",
     "VN",

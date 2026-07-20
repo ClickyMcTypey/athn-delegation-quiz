@@ -1,4 +1,10 @@
-import { BANNED_COUNTRIES } from '../constants.js';
+import { BANNED_COUNTRIES, GEOIP_DEV_BYPASS } from '../constants.js';
+
+function isGeoBypassEnabled() {
+    const params = new URLSearchParams(window.location.search);
+
+    return params.get(GEOIP_DEV_BYPASS.param) === GEOIP_DEV_BYPASS.value;
+}
 
 function normalizeCountryCode(value) {
     return String(value || '').trim().toUpperCase();
@@ -20,6 +26,20 @@ function getGeoResult(payload) {
 }
 
 export function setupGeoIP(state) {
+    const isBypassed = isGeoBypassEnabled();
+
+    state.geo = {
+        countryCode: '',
+        isBanned: false,
+        isBypassed,
+        status: isBypassed ? 'bypassed' : 'loading',
+    };
+
+    if (isBypassed) {
+        console.log('[Delegation Quiz] GeoIP routing bypassed via URL param');
+        return;
+    }
+    
     state.geo = {
         countryCode: '',
         isBanned: false,

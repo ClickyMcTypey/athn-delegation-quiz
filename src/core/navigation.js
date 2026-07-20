@@ -35,7 +35,7 @@ export function setupNavigation(state) {
                     result: state.result,
                 });
 
-                if (state.geo?.isBanned) {
+                if (state.geo?.isBanned && !state.geo?.isBypassed) {
                     await goToResultSlide(state, state.result.resultKey);
                     return;
                 }
