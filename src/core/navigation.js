@@ -30,10 +30,10 @@ export function setupNavigation(state) {
             if (isFormSlide(nextSlide)) {
                 updateQuizResult(state);
 
-                console.log('[Delegation Quiz] Route check', {
-                    geo: state.geo,
-                    result: state.result,
-                });
+                // console.log('[Delegation Quiz] Route check', {
+                //     geo: state.geo,
+                //     result: state.result,
+                // });
 
                 if (state.geo?.isBanned && !state.geo?.isBypassed) {
                     await goToResultSlide(state, state.result.resultKey);

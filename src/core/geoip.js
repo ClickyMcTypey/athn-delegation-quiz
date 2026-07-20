@@ -36,10 +36,10 @@ export function setupGeoIP(state) {
     };
 
     if (isBypassed) {
-        console.log('[Delegation Quiz] GeoIP routing bypassed via URL param');
+        //console.log('[Delegation Quiz] GeoIP routing bypassed via URL param');
         return;
     }
-    
+
     state.geo = {
         countryCode: '',
         isBanned: false,
@@ -48,7 +48,7 @@ export function setupGeoIP(state) {
 
     if (window.DELEGATION_QUIZ_GEO) {
         state.geo = getGeoResult(window.DELEGATION_QUIZ_GEO);
-        console.log('[Delegation Quiz] GeoIP result', state.geo);
+        //console.log('[Delegation Quiz] GeoIP result', state.geo);
         return;
     }
 
@@ -56,7 +56,7 @@ export function setupGeoIP(state) {
         'delegationQuiz:geoip',
         (event) => {
             state.geo = getGeoResult(event.detail);
-            console.log('[Delegation Quiz] GeoIP result', state.geo);
+            //console.log('[Delegation Quiz] GeoIP result', state.geo);
         },
         { once: true }
     );

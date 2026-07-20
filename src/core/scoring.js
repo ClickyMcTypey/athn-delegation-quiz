@@ -75,7 +75,7 @@ export function isFormSlide(slide) {
 export function updateQuizResult(state) {
     state.result = calculateQuizResult(state);
 
-    console.log('[Delegation Quiz] Result calculated', state.result);
+    //console.log('[Delegation Quiz] Result calculated', state.result);
 
     return state.result;
 }

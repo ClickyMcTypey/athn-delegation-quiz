@@ -64,9 +64,9 @@ export function updateProgressBar(state) {
         progressTotal.textContent = String(total);
     }
 
-    console.log('[Delegation Quiz] Progress updated', {
-        current,
-        total,
-        percent,
-    });
+    // console.log('[Delegation Quiz] Progress updated', {
+    //     current,
+    //     total,
+    //     percent,
+    // });
 }

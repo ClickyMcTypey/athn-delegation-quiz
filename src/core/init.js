@@ -45,7 +45,7 @@ export function initQuiz() {
     setupEducationBlockMove(state);
     fadeInQuiz(state);
 
-    console.log('[Delegation Quiz] Initialized', state);
+    //console.log('[Delegation Quiz] Initialized', state);
 
     return state;
 }

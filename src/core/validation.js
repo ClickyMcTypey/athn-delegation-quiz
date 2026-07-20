@@ -59,6 +59,6 @@ export function setupValidation(state) {
 
         validateSlide(state, slide);
 
-        console.log('[Delegation Quiz] Answers updated', state.answers);
+        //console.log('[Delegation Quiz] Answers updated', state.answers);
     });
 }

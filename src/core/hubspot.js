@@ -67,7 +67,7 @@ export function moveEducationBlockBeforeSubmit(state) {
 
     submitBlock.parentNode.insertBefore(educationBlock, submitBlock);
 
-    console.log('[Delegation Quiz] Education block moved before HubSpot submit');
+    //console.log('[Delegation Quiz] Education block moved before HubSpot submit');
 
     return true;
 }
