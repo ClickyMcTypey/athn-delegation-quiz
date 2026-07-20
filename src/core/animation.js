@@ -189,3 +189,79 @@ export function animateToSlide(state, targetIndex) {
         }, duration + 40);
     });
 }
+
+export function animateToCustomSlide(state, targetSlide) {
+    return new Promise((resolve) => {
+        const currentSlide = state.slides[state.currentIndex];
+
+        if (!currentSlide || !targetSlide) {
+            resolve(false);
+            return;
+        }
+
+        state.isAnimating = true;
+        state.root.classList.add('is-transitioning');
+
+        const container = state.slideContainer;
+        const currentHeight = container.getBoundingClientRect().height;
+
+        container.style.height = `${currentHeight}px`;
+        container.style.overflow = 'hidden';
+        container.style.transition = '';
+        container.offsetHeight;
+
+        targetSlide.style.display = 'block';
+        targetSlide.style.opacity = '0';
+        targetSlide.style.transform = 'none';
+        targetSlide.style.visibility = 'hidden';
+        targetSlide.setAttribute('aria-hidden', 'false');
+
+        if ('inert' in currentSlide) currentSlide.inert = true;
+        if ('inert' in targetSlide) targetSlide.inert = true;
+
+        targetSlide.offsetHeight;
+
+        const targetHeight = targetSlide.scrollHeight;
+
+        targetSlide.style.visibility = '';
+
+        const heightTransition = `height ${ANIMATION.heightDuration}ms ${ANIMATION.fadeEase}`;
+        const fadeTransition = `opacity ${ANIMATION.fadeDuration}ms ${ANIMATION.fadeEase}`;
+
+        container.style.transition = heightTransition;
+        currentSlide.style.transition = fadeTransition;
+        targetSlide.style.transition = fadeTransition;
+
+        container.offsetHeight;
+
+        container.style.height = `${targetHeight}px`;
+        currentSlide.style.opacity = '0';
+        targetSlide.style.opacity = '1';
+
+        const duration = Math.max(ANIMATION.fadeDuration, ANIMATION.heightDuration);
+
+        window.setTimeout(() => {
+            currentSlide.style.display = 'none';
+            currentSlide.style.transition = '';
+            currentSlide.style.opacity = '0';
+            currentSlide.setAttribute('aria-hidden', 'true');
+
+            targetSlide.style.transition = '';
+            targetSlide.style.opacity = '1';
+            targetSlide.style.visibility = '';
+
+            container.style.transition = '';
+            container.style.height = `${targetHeight}px`;
+
+            state.activeResultSlide = targetSlide;
+            state.isAnimating = false;
+            state.root.classList.remove('is-transitioning');
+
+            if ('inert' in targetSlide) {
+                targetSlide.inert = false;
+            }
+
+            resolve(true);
+        }, duration + 40);
+    });
+}

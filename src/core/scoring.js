@@ -2,31 +2,37 @@ const RESULT_TIERS = [
     {
         min: 10,
         max: 16,
+        key: 'beginner',
         label: 'Beginner',
     },
     {
         min: 17,
         max: 22,
+        key: 'novice',
         label: 'Novice',
     },
     {
         min: 23,
         max: 28,
+        key: 'intermediate',
         label: 'Intermediate',
     },
     {
         min: 29,
         max: 33,
+        key: 'advanced',
         label: 'Advanced',
     },
     {
         min: 34,
         max: 37,
+        key: 'expert',
         label: 'Expert',
     },
     {
         min: 38,
         max: 40,
+        key: 'mastery',
         label: 'Mastery',
     },
 ];
@@ -37,21 +43,22 @@ function getTotalScore(answers) {
     }, 0);
 }
 
-function getResultLabel(totalScore) {
-    const result = RESULT_TIERS.find((tier) => {
-        return totalScore >= tier.min && totalScore <= tier.max;
-    });
-
-    return result?.label || RESULT_TIERS[RESULT_TIERS.length - 1].label;
+function getResult(totalScore) {
+    return (
+        RESULT_TIERS.find((tier) => {
+            return totalScore >= tier.min && totalScore <= tier.max;
+        }) || RESULT_TIERS[RESULT_TIERS.length - 1]
+    );
 }
 
 export function calculateQuizResult(state) {
     const totalScore = getTotalScore(state.answers);
-    const resultLabel = getResultLabel(totalScore);
+    const result = getResult(totalScore);
 
     return {
         totalScore,
-        resultLabel,
+        resultKey: result.key,
+        resultLabel: result.label,
     };
 }
 

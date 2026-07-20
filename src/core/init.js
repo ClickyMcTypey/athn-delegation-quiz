@@ -5,6 +5,7 @@ import { setupValidation } from './validation.js';
 import { setupNavigation } from './navigation.js';
 import { fadeInQuiz } from './animation.js';
 import { setupHubSpotCallbacks, setupHubSpotMessageLogger, setupEducationBlockMove, } from './hubspot.js';
+import { setupGeoIP } from './geoip.js';
 
 export function initQuiz() {
     const root = qs(SELECTORS.root);
@@ -18,6 +19,8 @@ export function initQuiz() {
         return null;
     }
 
+    const resultSlides = qsa(SELECTORS.resultSlide, root);
+
     const state = {
         root,
         slideContainer,
@@ -25,8 +28,10 @@ export function initQuiz() {
         currentIndex: 0,
         isAnimating: false,
         answers: {},
+        resultSlides,
     };
 
+    setupGeoIP(state);
     setupInitialSlides(state);
     setupValidation(state);
     setupNavigation(state);

@@ -1,3 +1,16 @@
+export const GEOIP_ENDPOINT = window.DELEGATION_QUIZ_GEOIP_ENDPOINT || '';
+
+export const BANNED_COUNTRIES = [
+    "PH",
+    "VN",
+    "ID",
+    "IN",
+    "NG",
+    "MY",
+    "KE",
+    "GT",
+];
+
 export const SELECTORS = {
     root: '#mainquiz',
     slideContainer: '.quiz_slidecontainer',
@@ -14,6 +27,7 @@ export const SELECTORS = {
     loader: '.quiz_loader',
     educationBlock: '#educ1',
     hubspotSubmit: '.hs_submit',
+    resultSlide: '.quiz_slide[result]',
 };
 
 export const CLASSES = {
