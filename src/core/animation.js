@@ -1,20 +1,49 @@
 import { ANIMATION, SELECTORS } from '../constants.js';
 import { updateProgressBar } from './progress.js';
 
-function getHeight(element) {
-    return element.scrollHeight;
+function getSlideHeight(slide, fallbackHeight = 320) {
+    if (!slide) return fallbackHeight;
+
+    const previous = {
+        display: slide.style.display,
+        visibility: slide.style.visibility,
+        opacity: slide.style.opacity,
+        position: slide.style.position,
+        height: slide.style.height,
+    };
+
+    slide.style.display = 'block';
+    slide.style.visibility = 'hidden';
+    slide.style.opacity = '0';
+    slide.style.position = 'relative';
+    slide.style.height = 'auto';
+
+    const height = slide.scrollHeight || slide.getBoundingClientRect().height;
+
+    slide.style.display = previous.display;
+    slide.style.visibility = previous.visibility;
+    slide.style.opacity = previous.opacity;
+    slide.style.position = previous.position;
+    slide.style.height = previous.height;
+
+    if (!height || height < 1) {
+        console.warn('[Delegation Quiz] Slide measured as 0 height', slide);
+        return fallbackHeight;
+    }
+
+    return height;
 }
 
-function animateContainerHeight(state, fromHeight, toHeight) {
-    const container = state.slideContainer;
+function getActiveSlideHeight(slide, fallbackHeight = 320) {
+    if (!slide) return fallbackHeight;
 
-    container.style.height = `${fromHeight}px`;
-    container.style.overflow = 'hidden';
-    container.style.transition = `height ${ANIMATION.heightDuration}ms ${ANIMATION.fadeEase}`;
+    const height = slide.scrollHeight || slide.getBoundingClientRect().height;
 
-    container.offsetHeight;
+    if (!height || height < 1) {
+        return fallbackHeight;
+    }
 
-    container.style.height = `${toHeight}px`;
+    return height;
 }
 
 function watchActiveSlideHeight(state, slide) {
@@ -27,7 +56,13 @@ function watchActiveSlideHeight(state, slide) {
     state.activeResizeObserver = new ResizeObserver(() => {
         if (state.isAnimating) return;
 
-        const height = slide.getBoundingClientRect().height;
+        const currentContainerHeight =
+            state.slideContainer.getBoundingClientRect().height || 320;
+
+        const height = getActiveSlideHeight(slide, currentContainerHeight);
+
+        if (!height || height < 1) return;
+
         state.slideContainer.style.height = `${height}px`;
     });
 
@@ -46,18 +81,23 @@ export function fadeInQuiz(state) {
     root.setAttribute('aria-busy', 'true');
 
     const startHeight =
-        loader?.getBoundingClientRect().height || ANIMATION.loadingHeight;
+        loader?.getBoundingClientRect().height || ANIMATION.loadingHeight || 320;
 
     container.style.height = `${startHeight}px`;
     container.style.overflow = 'hidden';
+    container.style.transition = '';
 
     firstSlide.style.display = 'block';
     firstSlide.style.visibility = 'hidden';
     firstSlide.style.opacity = '0';
+    firstSlide.style.transform = 'none';
 
     firstSlide.offsetHeight;
 
-    const targetHeight = firstSlide.getBoundingClientRect().height;
+    const targetHeight = getSlideHeight(
+        firstSlide,
+        ANIMATION.loadingHeight || 320
+    );
 
     firstSlide.style.visibility = '';
 
@@ -86,8 +126,11 @@ export function fadeInQuiz(state) {
     window.setTimeout(() => {
         container.style.transition = '';
         container.style.height = `${targetHeight}px`;
+        container.style.overflow = 'hidden';
+
         firstSlide.style.transition = '';
         firstSlide.style.opacity = '1';
+        firstSlide.style.visibility = '';
 
         if (loader) {
             loader.style.display = 'none';
@@ -119,27 +162,31 @@ export function animateToSlide(state, targetIndex) {
         state.root.classList.add('is-transitioning');
 
         const container = state.slideContainer;
-        const currentHeight = container.getBoundingClientRect().height;
+        const currentHeight = container.getBoundingClientRect().height || 320;
 
-        // Lock current height before any slide visibility changes.
         container.style.height = `${currentHeight}px`;
         container.style.overflow = 'hidden';
         container.style.transition = '';
+
         container.offsetHeight;
 
-        // Prepare target for measurement.
         targetSlide.style.display = 'block';
         targetSlide.style.opacity = '0';
         targetSlide.style.transform = 'none';
         targetSlide.style.visibility = 'hidden';
         targetSlide.setAttribute('aria-hidden', 'false');
 
-        if ('inert' in currentSlide) currentSlide.inert = true;
-        if ('inert' in targetSlide) targetSlide.inert = true;
+        if ('inert' in currentSlide) {
+            currentSlide.inert = true;
+        }
+
+        if ('inert' in targetSlide) {
+            targetSlide.inert = true;
+        }
 
         targetSlide.offsetHeight;
 
-        const targetHeight = targetSlide.getBoundingClientRect().height;
+        const targetHeight = getSlideHeight(targetSlide, currentHeight);
 
         targetSlide.style.visibility = '';
 
@@ -164,7 +211,9 @@ export function animateToSlide(state, targetIndex) {
             currentSlide.style.opacity = '0';
             currentSlide.setAttribute('aria-hidden', 'true');
 
-            if ('inert' in currentSlide) currentSlide.inert = true;
+            if ('inert' in currentSlide) {
+                currentSlide.inert = true;
+            }
 
             targetSlide.style.transition = '';
             targetSlide.style.opacity = '1';
@@ -172,7 +221,10 @@ export function animateToSlide(state, targetIndex) {
 
             container.style.transition = '';
             container.style.height = `${targetHeight}px`;
+            container.style.overflow = 'hidden';
+
             state.currentIndex = targetIndex;
+            state.activeResultSlide = null;
             state.isAnimating = false;
             state.root.classList.remove('is-transitioning');
 
@@ -180,9 +232,7 @@ export function animateToSlide(state, targetIndex) {
                 targetSlide.inert = false;
             }
 
-
             watchActiveSlideHeight(state, targetSlide);
-
             updateProgressBar(state);
 
             resolve(true);
@@ -203,11 +253,12 @@ export function animateToCustomSlide(state, targetSlide) {
         state.root.classList.add('is-transitioning');
 
         const container = state.slideContainer;
-        const currentHeight = container.getBoundingClientRect().height;
+        const currentHeight = container.getBoundingClientRect().height || 320;
 
         container.style.height = `${currentHeight}px`;
         container.style.overflow = 'hidden';
         container.style.transition = '';
+
         container.offsetHeight;
 
         targetSlide.style.display = 'block';
@@ -216,12 +267,17 @@ export function animateToCustomSlide(state, targetSlide) {
         targetSlide.style.visibility = 'hidden';
         targetSlide.setAttribute('aria-hidden', 'false');
 
-        if ('inert' in currentSlide) currentSlide.inert = true;
-        if ('inert' in targetSlide) targetSlide.inert = true;
+        if ('inert' in currentSlide) {
+            currentSlide.inert = true;
+        }
+
+        if ('inert' in targetSlide) {
+            targetSlide.inert = true;
+        }
 
         targetSlide.offsetHeight;
 
-        const targetHeight = targetSlide.scrollHeight;
+        const targetHeight = getSlideHeight(targetSlide, currentHeight);
 
         targetSlide.style.visibility = '';
 
@@ -246,12 +302,17 @@ export function animateToCustomSlide(state, targetSlide) {
             currentSlide.style.opacity = '0';
             currentSlide.setAttribute('aria-hidden', 'true');
 
+            if ('inert' in currentSlide) {
+                currentSlide.inert = true;
+            }
+
             targetSlide.style.transition = '';
             targetSlide.style.opacity = '1';
             targetSlide.style.visibility = '';
 
             container.style.transition = '';
             container.style.height = `${targetHeight}px`;
+            container.style.overflow = 'hidden';
 
             state.activeResultSlide = targetSlide;
             state.isAnimating = false;
@@ -260,6 +321,8 @@ export function animateToCustomSlide(state, targetSlide) {
             if ('inert' in targetSlide) {
                 targetSlide.inert = false;
             }
+
+            watchActiveSlideHeight(state, targetSlide);
 
             resolve(true);
         }, duration + 40);
