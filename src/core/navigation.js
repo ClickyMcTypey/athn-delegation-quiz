@@ -1,5 +1,10 @@
 import { SELECTORS } from '../constants.js';
-import { getCurrentSlide, goToNextSlide, goToPrevSlide, goToResultSlide } from './steps.js';
+import {
+    getCurrentSlide,
+    goToNextSlide,
+    goToPrevSlide,
+    goToResultSlide,
+} from './steps.js';
 import { validateSlide } from './validation.js';
 import { isFormSlide, updateQuizResult } from './scoring.js';
 import { syncResultToHubSpot } from './hubspot.js';
@@ -19,37 +24,28 @@ export function setupNavigation(state) {
 
             if (!isValid) return;
 
-            await goToNextSlide(state);
+            const nextIndex = state.currentIndex + 1;
+            const nextSlide = state.slides[nextIndex];
 
-            const nextSlide = getCurrentSlide(state);
+            if (isFormSlide(nextSlide)) {
+                updateQuizResult(state);
 
-            if (command === 'next') {
-                const currentSlide = getCurrentSlide(state);
-                const isValid = validateSlide(state, currentSlide);
+                console.log('[Delegation Quiz] Route check', {
+                    geo: state.geo,
+                    result: state.result,
+                });
 
-                if (!isValid) return;
-
-                const nextIndex = state.currentIndex + 1;
-                const nextSlide = state.slides[nextIndex];
-                const nextIsFormSlide = isFormSlide(nextSlide);
-
-                if (nextIsFormSlide) {
-                    updateQuizResult(state);
-
-                    if (state.geo?.isBanned) {
-                        await goToResultSlide(state, state.result.resultKey);
-                        return;
-                    }
-
-                    await goToNextSlide(state);
-                    syncResultToHubSpot(state);
+                if (state.geo?.isBanned) {
+                    await goToResultSlide(state, state.result.resultKey);
                     return;
                 }
 
                 await goToNextSlide(state);
+                syncResultToHubSpot(state);
                 return;
             }
 
+            await goToNextSlide(state);
             return;
         }
 

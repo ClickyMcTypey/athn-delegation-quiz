@@ -1,6 +1,6 @@
 const RESULT_TIERS = [
     {
-        min: 10,
+        min: 0,
         max: 16,
         key: 'beginner',
         label: 'Beginner',
@@ -44,11 +44,17 @@ function getTotalScore(answers) {
 }
 
 function getResult(totalScore) {
-    return (
-        RESULT_TIERS.find((tier) => {
-            return totalScore >= tier.min && totalScore <= tier.max;
-        }) || RESULT_TIERS[RESULT_TIERS.length - 1]
-    );
+    const result = RESULT_TIERS.find((tier) => {
+        return totalScore >= tier.min && totalScore <= tier.max;
+    });
+
+    if (result) return result;
+
+    if (totalScore < RESULT_TIERS[0].min) {
+        return RESULT_TIERS[0];
+    }
+
+    return RESULT_TIERS[RESULT_TIERS.length - 1];
 }
 
 export function calculateQuizResult(state) {

@@ -4,8 +4,12 @@ import { setupInitialSlides } from './steps.js';
 import { setupValidation } from './validation.js';
 import { setupNavigation } from './navigation.js';
 import { fadeInQuiz } from './animation.js';
-import { setupHubSpotCallbacks, setupHubSpotMessageLogger, setupEducationBlockMove, } from './hubspot.js';
 import { setupGeoIP } from './geoip.js';
+import {
+    setupEducationBlockMove,
+    setupHubSpotCallbacks,
+    setupHubSpotMessageLogger,
+} from './hubspot.js';
 
 export function initQuiz() {
     const root = qs(SELECTORS.root);
@@ -13,22 +17,23 @@ export function initQuiz() {
 
     const slideContainer = qs(SELECTORS.slideContainer, root);
     const slides = qsa(SELECTORS.slide, root);
+    const resultSlides = qsa(SELECTORS.resultSlide, root);
 
     if (!slideContainer || !slides.length) {
         console.warn('[Delegation Quiz] Missing slide container or slides.');
         return null;
     }
 
-    const resultSlides = qsa(SELECTORS.resultSlide, root);
-
     const state = {
         root,
         slideContainer,
         slides,
+        resultSlides,
         currentIndex: 0,
         isAnimating: false,
         answers: {},
-        resultSlides,
+        result: null,
+        activeResultSlide: null,
     };
 
     setupGeoIP(state);
@@ -37,8 +42,8 @@ export function initQuiz() {
     setupNavigation(state);
     setupHubSpotCallbacks(state);
     setupHubSpotMessageLogger();
-    fadeInQuiz(state);
     setupEducationBlockMove(state);
+    fadeInQuiz(state);
 
     console.log('[Delegation Quiz] Initialized', state);
 
